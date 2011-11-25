@@ -5,11 +5,12 @@ require 'shoulda'
 
 $: << 'lib'
 
-TEST_DIR=ARGV[0]
+TEST_DIR=ARGV[0] || 'tdoc/'
+EXTENTION=ARGV[1] || '.tdoc'
 LINST='^[#|\s]*'
 
 def mk_context(file,test_case=nil)
-  test_name=File.basename(file).sub('.tdoc','')
+  test_name=File.basename(file).sub(EXTENTION,'')
   unless test_case
     test_case=eval "::Test#{test_name.capitalize}=Class.new(Test::Unit::TestCase)"
   end
@@ -36,7 +37,7 @@ def mk_context(file,test_case=nil)
   end
 end
 def mk_tests(test_dir)
-  files=Dir.glob("#{test_dir}/*.tdoc")
+  files=Dir.glob("#{test_dir}*#{EXTENTION}")
   files.each { |file| mk_context(file)}
 end
 mk_tests(TEST_DIR)

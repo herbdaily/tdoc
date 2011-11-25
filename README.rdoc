@@ -5,12 +5,13 @@
 
 Tdoc combines rdoc, test::unit and shoulda, and concepts from rubytestdoc.
 
-- Test/doc files map to Test::Unit::TestCase classes with a single context
-- tdoc parses each file for the following directives:
+- Tdoc files (default extention: .tdoc) map to Test::Unit::TestCase classes with a single context
+- Tdoc directives take up 1 line, with the exception of the "examples" directive.  They may be preceded by any number of whitespace characters and terminate with a colon.
+- Tdoc understands the following directives:
   - tdoc_require
   - tdoc_context
   - tdoc_setup
-  - example(s)
+  - examples
 
   tdoc_require: rubygems
 
@@ -18,5 +19,10 @@ Tdoc combines rdoc, test::unit and shoulda, and concepts from rubytestdoc.
     
     >> "asdf"
     -> "asdf"
+
+  usage:
+
+    tdoc [test_directory] [extention]
+
 
 
