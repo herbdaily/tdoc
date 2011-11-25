@@ -20,7 +20,7 @@ def mk_context(file,test_case=nil)
   directives[:context]||=[]
   text.scan(/#{LINST}:include:\s*(.+)/).each do |i|
     i[0].split(',').each do |file|
-      directives[:context] << file
+      directives[:context] << file unless file.match(/^blob/)
     end
   end
   directives[:context].to_a.each {|c| mk_context "#{TEST_DIR}#{c}", test_case}
