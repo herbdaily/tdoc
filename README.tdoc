@@ -1,0 +1,22 @@
+
+=Tdoc 
+
+== Test oriented documentation
+
+Tdoc combines rdoc, test::unit and shoulda, and concepts from rubytestdoc.
+
+- Test/doc files map to Test::Unit::TestCase classes with a single context
+- tdoc parses each file for the following directives:
+  - tdoc_require
+  - tdoc_context
+  - tdoc_setup
+  - example(s)
+
+  tdoc_require: rubygems
+
+  examples:
+    
+    >> "asdf"
+    -> "asdf"
+
+
