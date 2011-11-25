@@ -13,15 +13,18 @@ def mk_context(file,test_case=nil)
     test_case=eval "::Test#{test_name.capitalize}=Class.new(Test::Unit::TestCase)"
   end
   text=File.read(file)
-  directives=text.scan(/#{LINST}tdoc_(.+):\s*(.+)/).inject({}) {|h,d| h[d[0].to_sym]||=[];h[d[0].to_sym] << d[1];h}
+  directives=text.scan(/#{LINST}tdoc_(.+?):\s*(.+)/).inject({}) {|h,d| h[d[0].to_sym]||=[];h[d[0].to_sym] << d[1];h}
   directives[:require].to_a.each {|r| require r}
   tests=text.split(/#{LINST}[Ee]xamples:/)[1..-1].map do |test|
-    [test.split(/\n/)[0], test.scan(/[#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) ]
+    [test.split(/\n/)[0], test.scan(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) ]
   end
   test_case.class_eval do
+    define_method :setup do
+        eval directives[:setup].join ';'
+    end
     context test_name do 
-      setup do
-        directives[:setup].to_a.each {|d| eval d}
+      setup do 
+        eval directives[:setup].join ';'
       end
     end
     tests.each do |test|
