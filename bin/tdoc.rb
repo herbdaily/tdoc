@@ -19,18 +19,15 @@ def mk_context(file,test_case=nil)
     [test.split(/\n/)[0], test.scan(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) ]
   end
   test_case.class_eval do
-    define_method :setup do
-        eval directives[:setup].join ';'
-    end
     context test_name do 
       setup do 
         eval directives[:setup].join ';'
       end
-    end
-    tests.each do |test|
-      should test[0] do
-        test[1].each do |assertion|
-          assert_equal eval(assertion[0]), eval(assertion[1])
+      tests.each do |test|
+        should test[0] do
+          test[1].each do |assertion|
+            assert_equal eval(assertion[0]), eval(assertion[1])
+          end
         end
       end
     end
