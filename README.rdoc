@@ -20,9 +20,9 @@ Tdoc combines rdoc, test::unit and shoulda, and concepts from rubytestdoc.
     assert_equal "asdf","asdf"
   Tdoc will then include all assertions within the context created from the example block
 
-  :include: blob/master/rdoc/example.rdoc
+  :include:blob/master/rdoc/example.rdoc
 
-  :include: rdoc/example.rdoc
+  :include:rdoc/example.rdoc
 
 usage:
 
