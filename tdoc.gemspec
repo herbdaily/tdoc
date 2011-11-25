@@ -11,4 +11,6 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 1.0.0") if s.respond_to? :required_rubygems_version=
   s.add_runtime_dependency 'shoulda', '~>2.11.3'
   s.files = ['README.rdoc','bin/tdoc.rb']
+  s.executables = ["tdoc.rb"]
+  s.default_executable = "tdoc.rb"
 end
