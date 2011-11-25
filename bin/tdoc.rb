@@ -18,20 +18,19 @@ def mk_context(file,test_case=nil)
   directives=text.scan(/#{LINST}tdoc_(.+?):\s*(.+)/).inject({}) {|h,d| h[d[0].to_sym]||=[];h[d[0].to_sym] << d[1];h}
   directives[:require].to_a.each {|r| require r}
   directives[:context].to_a.each {|c| mk_context "#{TEST_DIR}#{c}", test_case}
-  tests=text.split(/#{LINST}[Ee]xamples:/).to_a[1..-1].to_a.map do |test|
-    [test.split(/\n/)[0], test.scan(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) ]
+  tests=text.split(/#{LINST}[Ee]xamples?:/).to_a[1..-1].to_a.map do |test|
+    test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| "assert_equal #{$1}, #{$2}"}
+    lines=test.split(/\n/)
+    test_text=lines.map {|l| l.match(/#{LINST}(assert.+)/) && $1}.compact.join ";"
+    [lines[0], test_text]
   end
-  test_case.class_eval do
-    context test_name do 
-      setup do 
-        eval directives[:setup].to_a.join ';'
-      end
-      tests.each do |test|
-        should test[0] do
-          test[1].each do |assertion|
-            assert_equal eval(assertion[0]), eval(assertion[1])
-          end
-        end
+  test_case.context test_name do 
+    setup do 
+      eval directives[:setup].to_a.join ';'
+    end
+    tests.each do |test|
+      should test[0] do
+        eval test[1]
       end
     end
   end

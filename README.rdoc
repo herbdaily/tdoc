@@ -12,13 +12,25 @@ Tdoc combines rdoc, test::unit and shoulda, and concepts from rubytestdoc.
   - tdoc_context
   - tdoc_setup
   - examples
+- within each examples block, Tdoc will convert cut and pastes from irb into assert_equal blocks, so
+    >> "asdf"
+    => "asdf"
+  turns into:
+    assert_equal "asdf","asdf"
+  Tdoc will then include all assertions within the context created from the example block
 
   tdoc_require: rubygems
 
-  examples:
+  examples: simple irb  with 1 assertion
     
     >> "asdf"
-    -> "asdf"
+    => "asdf"
+    >> x="foo"
+    => "foo"
+    >> x
+    => "foo"
+    assert_raise ZeroDivisionError do; 1/0 ;end
+
 
   usage:
 
