@@ -17,6 +17,12 @@ def mk_context(file,test_case=nil)
   text=File.read(file)
   directives=text.scan(/#{LINST}tdoc_(.+?):\s*(.+)/).inject({}) {|h,d| h[d[0].to_sym]||=[];h[d[0].to_sym] << d[1];h}
   directives[:require].to_a.each {|r| require r}
+  directives[:context]||=[]
+  text.scan(/#{LINST}:include:\s*(.+)/).each do |i|
+    i[0].split(',').each do |file|
+      directives[:context] << file
+    end
+  end
   directives[:context].to_a.each {|c| mk_context "#{TEST_DIR}#{c}", test_case}
   tests=text.split(/#{LINST}[Ee]xamples?:/).to_a[1..-1].to_a.map do |test|
     test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| "assert_equal #{$1}, #{$2}"}

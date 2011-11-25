@@ -10,6 +10,7 @@ Tdoc combines rdoc, test::unit and shoulda, and concepts from rubytestdoc.
 - Tdoc understands the following directives:
   - tdoc_require
   - tdoc_context
+    - RDoc's standard :include: directive now does the same thing as tdoc_context
   - tdoc_setup
   - examples
 - within each examples block, Tdoc will convert cut and pastes from irb into assert_equal blocks, so
@@ -19,18 +20,7 @@ Tdoc combines rdoc, test::unit and shoulda, and concepts from rubytestdoc.
     assert_equal "asdf","asdf"
   Tdoc will then include all assertions within the context created from the example block
 
-  tdoc_require: rubygems
-
-  examples: simple irb  with 1 assertion
-    
-    >> "asdf"
-    => "asdf"
-    >> x="foo"
-    => "foo"
-    >> x
-    => "foo"
-    assert_raise ZeroDivisionError do; 1/0 ;end
-
+:include: rdoc/example.rdoc
 
   usage:
 

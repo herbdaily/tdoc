@@ -1,0 +1,13 @@
+==examples
+
+  tdoc_require: rubygems
+
+  examples: simple irb  with 1 assertion
+    
+    >> "asdf"
+    => "asdf"
+    >> x="foo"
+    => "foo"
+    >> x
+    => "foo"
+    assert_raise ZeroDivisionError do; 1/0 ;end
