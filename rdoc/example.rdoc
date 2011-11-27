@@ -1,7 +1,5 @@
 ==examples
 
-  tdoc_require: rubygems
-
   examples: simple irb  with 1 assertion
     
     >> "asdf"

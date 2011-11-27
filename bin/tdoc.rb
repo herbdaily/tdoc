@@ -2,52 +2,53 @@
 require 'rubygems'
 require 'test/unit'
 require 'shoulda'
-require 'optparse'
 
 $: << 'lib'
 
 LINST='^[#|\s]*'
+LINSTM='[#|\s]*'
+EXTENSIONS={:test => '.rdoc',:require => '_require.rb'}
+DEFAULT_FILE="README#{EXTENSIONS[:test]}"
 
-def process
-  mk_context(@opts[:filename])
+def process(files=nil) #called at end of script
+  files||=DEFAULT_FILE
+  if files.class==Array
+    files.each {|f|`#{$PROGRAM_NAME} #{f}`}
+  else
+    mk_test_context(files)
+  end
 end
-@opts={}
-OptionParser.new do |o|
-  o.on('-d DIRECTORY') { |d| @opts[:directory]=d}
-  o.on('-f FILENAME') { |f| @opts[:filename]=f}
-  o.on('-e EXTENTION') { |e| @opts[:extension]=e}
-  o.on('-h') { puts o; exit }
-  o.parse!
-end
-
-if @opts.empty?#for backward compatibility
-  TEST_DIR=ARGV[0] || 'tdoc/'
-  EXTENTION=ARGV[1] || '.tdoc'
-else
-  TEST_DIR=@opts[:directory] || 'rdoc/'
-  EXTENTION=@opts[:extension] || '.rdoc'
-end
-
-def mk_tests(test_dir)
-  files=Dir.glob("#{test_dir}*#{EXTENTION}")
-  files.each { |file| mk_context(file)}
-end
-def mk_context(file,test_case=nil)
-  test_name=File.basename(file).sub(EXTENTION,'')
+def mk_test_context(file, test_case=nil)
+  test_name=File.basename(file).sub(/\..*?/,'')
+  test_dir=File.dirname(file)
   unless test_case
     test_case=Class.new(Test::Unit::TestCase)
     Object.const_set(:"Test#{test_name.capitalize}", test_case)
   end
   text=File.read(file)
-  directives=text.scan(/#{LINST}tdoc_(.+?):\s*(.+)/).inject({}) {|h,d| h[d[0].to_sym]||=[];h[d[0].to_sym] << d[1];h}
-  directives[:require].to_a.each {|r| require r}
-  directives[:context]||=[]
-  text.scan(/#{LINST}:include:\s*(.+)/).each do |i|
-    i[0].split(',').each do |file|
-      directives[:context] << file unless file.match(/^blob/)
+  opts={
+    :requires => Dir.glob("#{test_dir}#{test_name}#{EXTENSIONS[:require]}"),
+    :contexts => Dir.glob("#{test_dir}#{test_name}/*#{EXTENSIONS[:test]}"),
+  }
+  opts.keys.each do |opt|
+    text.scan(/#{LINST}:include:\s*(.+#{EXTENSIONS[opt]})/).each do |files|
+      files[0].split(',').each do |f|
+        opts[opt] << f unless f.match(/^blob/)
+      end
     end
   end
-  directives[:context].to_a.each {|c| mk_context "#{TEST_DIR}#{c}", test_case}
+  opts[:test_cases]=[]
+  opts[:contexts].map! {|c| 
+    if c.match(/#{test_name}/)
+      c
+    else
+      opts[:test_cases] << c
+      nil
+    end
+  }
+  opts[:contexts].compact.each {|c| mk_test_context c, test_case}
+  opts[:test_cases].each {|c| process(c)}
+  opts[:setup]=text.match(/#{LINSTM}setup\s+(.*?)#{LINSTM}end\s+/m).to_a.map {|m| m[1]}
   tests=text.split(/#{LINST}[Ee]xamples?:/).to_a[1..-1].to_a.map do |test|
     test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| "assert_equal #{$1}, #{$2}"}
     lines=test.split(/\n/)
@@ -56,7 +57,7 @@ def mk_context(file,test_case=nil)
   end
   test_case.context test_name do 
     setup do 
-      eval directives[:setup].to_a.join ';'
+      eval opts[:setup].to_a.join ';'
     end
     tests.each do |test|
       should test[0] do
@@ -65,11 +66,4 @@ def mk_context(file,test_case=nil)
     end
   end
 end
-if Object.const_defined?(:TEST_DIR)
-  mk_tests(TEST_DIR)
-else
-  process
-end
-
-
-
+process

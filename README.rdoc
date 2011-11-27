@@ -3,6 +3,8 @@
 
 == Test oriented documentation
 
+*note:* Version 0.4.0 completely breaks the API from 0.3.0
+
 Tdoc combines rdoc, test::unit and shoulda, and concepts from rubytestdoc.
 
 - Tdoc files (default extention: .tdoc) map to Test::Unit::TestCase classes with a single context
