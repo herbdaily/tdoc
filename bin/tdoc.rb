@@ -7,7 +7,7 @@ $: << 'lib'
 
 LINST='^[#|\s]*'
 LINSTM='[#|\s]*'
-EXTENSIONS={:contexts => '.rdoc',:tests => '.rdoc',:requires => '_require.rb'}
+EXTENSIONS={:tests => '.rdoc',:requires => '_require.rb'}
 DEFAULT_FILE="README#{EXTENSIONS[:tests]}"
 
 def process(files=nil) #called at end of script
@@ -28,29 +28,19 @@ def mk_test_context(file, test_case=nil)
   text=File.read(file)
   opts={
     :requires => Dir.glob("#{test_dir}/#{test_name}#{EXTENSIONS[:requires]}"),
-    :contexts => Dir.glob("#{test_dir}/#{test_name}/*#{EXTENSIONS[:tests]}")
+    :contexts => Dir.glob("#{test_dir}/#{test_name}/*#{EXTENSIONS[:tests]}"),
+    :test_cases => [],
   }
-  opts.keys.each do |opt|
-      p EXTENSIONS,opt,EXTENSIONS[opt]
+  [:requires, :test_cases].each do |opt|
     text.scan(/#{LINST}:include:\s*(.+#{EXTENSIONS[opt]})/).each do |files|
       files[0].split(',').each do |f|
         opts[opt] << f unless f.match(/^blob/)
       end
     end
   end
-  opts[:requires].each {|r| require "#{test_dir}/#{r}" if FileTest.exist? "#{test_dir}/#{r}" }
-  opts[:test_cases]=[]
-  opts[:contexts].map! {|c| 
-    if c.match(/#{test_name}/)
-      c
-    else
-      opts[:test_cases] << c
-      nil
-    end
-  }
-  opts[:contexts].compact.each {|c| mk_test_context "#{test_dir}/#{c}", test_case}
-  opts[:test_cases].each {|c| process(c)}
-  opts[:setup]=text.match(/#{LINSTM}setup\s+(.*?)#{LINSTM}end\s+/m).to_a.map {|m| m[1]}
+  opts[:requires].each {|r| require "#{r}" if FileTest.exist? "#{r}" }
+  opts[:test_cases].delete_if {|c| c.match(/#{test_name}/)}
+  opts[:setup]=text.match(/#{LINSTM}setup\s+(.*?)#{LINSTM}end\s+/m).to_a[1]
   tests=text.split(/#{LINST}[Ee]xamples?:/).to_a[1..-1].to_a.map do |test|
     test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| "assert_equal #{$1}, #{$2}"}
     lines=test.split(/\n/)
@@ -67,5 +57,7 @@ def mk_test_context(file, test_case=nil)
       end
     end
   end
+  opts[:contexts].compact.each {|c| mk_test_context "#{c}", test_case}
+  opts[:test_cases].each {|c| process(c)}
 end
 process
