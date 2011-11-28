@@ -1,4 +1,3 @@
-==examples
 
   examples: simple irb  with 1 assertion
     

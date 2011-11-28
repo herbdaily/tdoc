@@ -7,19 +7,19 @@ $: << 'lib'
 
 LINST='^[#|\s]*'
 LINSTM='[#|\s]*'
-EXTENSIONS={:test => '.rdoc',:require => '_require.rb'}
+EXTENSIONS={:test => '.rdoc',:requires => '_require.rb'}
 DEFAULT_FILE="README#{EXTENSIONS[:test]}"
 
 def process(files=nil) #called at end of script
   files||=DEFAULT_FILE
-  if files.class==Array
-    files.each {|f|`#{$PROGRAM_NAME} #{f}`}
-  else
-    mk_test_context(files)
-  end
+    if files.class==Array
+      files.each {|f|`#{$PROGRAM_NAME} #{f}`}
+    else
+      mk_test_context(files)
+    end
 end
 def mk_test_context(file, test_case=nil)
-  test_name=File.basename(file).sub(/\..*?/,'')
+  test_name=File.basename(file).sub(/\..*?$/,'')
   test_dir=File.dirname(file)
   unless test_case
     test_case=Class.new(Test::Unit::TestCase)
@@ -28,7 +28,7 @@ def mk_test_context(file, test_case=nil)
   text=File.read(file)
   opts={
     :requires => Dir.glob("#{test_dir}#{test_name}#{EXTENSIONS[:require]}"),
-    :contexts => Dir.glob("#{test_dir}#{test_name}/*#{EXTENSIONS[:test]}"),
+    :contexts => Dir.glob("#{test_dir}#{test_name}/*#{EXTENSIONS[:test]}")
   }
   opts.keys.each do |opt|
     text.scan(/#{LINST}:include:\s*(.+#{EXTENSIONS[opt]})/).each do |files|
@@ -37,6 +37,7 @@ def mk_test_context(file, test_case=nil)
       end
     end
   end
+  opts[:requires].each {|r| require "./#{r}"}
   opts[:test_cases]=[]
   opts[:contexts].map! {|c| 
     if c.match(/#{test_name}/)

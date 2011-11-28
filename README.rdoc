@@ -5,9 +5,17 @@
 
 *note:* Version 0.4.0 completely breaks the API from 0.3.0
 
-Tdoc combines rdoc, test::unit and shoulda, and concepts from rubytestdoc.
+Tdoc takes a single argument specifying the file or glob to be processed.  If no arguments are given, Tdoc will process "README.rdoc" in the working directory.
 
-- Tdoc files (default extention: .tdoc) map to Test::Unit::TestCase classes with a single context
+- Tdoc will map each file given to a Test::Unit::TestCase.
+- For each such file, named e.g. '_filename_.rdoc', Tdoc will:
+  - require '<i>filename</i>_include.rb' if it exists
+  - create a context with the test case for each file in the directory named '_filename_' if it exists.
+  - process all :include: directives as follows:
+    - 
+    
+ 
+  
 - Tdoc directives take up 1 line, with the exception of the "examples" directive.  They may be preceded by any number of whitespace characters and terminate with a colon.
 - Tdoc understands the following directives:
   - tdoc_require
@@ -22,11 +30,11 @@ Tdoc combines rdoc, test::unit and shoulda, and concepts from rubytestdoc.
     assert_equal "asdf","asdf"
   Tdoc will then include all assertions within the context created from the example block
 
-  :include:rdoc/example.rdoc
-
 usage:
 
-  tdoc [test_directory] [extention]
+  tdoc [FILE_GLOB]
 
+examples:
 
+  :include:rdoc/example.rdoc
 
