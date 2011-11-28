@@ -7,11 +7,10 @@ $: << 'lib'
 
 LINST='^[#|\s]*'
 LINSTM='[#|\s]*'
-EXTENSIONS={:tests => '.rdoc',:requires => '_require.rb'}
+EXTENSIONS={:tests => '.rdoc',:requires => '.rb'}
 DEFAULT_FILE="README#{EXTENSIONS[:tests]}"
 
 def process(files=nil) #called at end of script
-  files=ARGV.shift if ARGV
   files||=DEFAULT_FILE
     if files.class==Array
       files.each {|f|`#{$PROGRAM_NAME} #{f}`}
@@ -61,4 +60,4 @@ def mk_test_context(file, test_case=nil)
   opts[:contexts].compact.each {|c| mk_test_context "#{c}", test_case}
   opts[:test_cases].each {|c| process(c)}
 end
-process
+process(ARGV.shift)
