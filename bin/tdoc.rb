@@ -10,13 +10,13 @@ LINSTM='[#|\s]*'
 EXTENSIONS={:tests => '.rdoc',:requires => '.rb'}
 DEFAULT_FILE="README#{EXTENSIONS[:tests]}"
 
-def process(files=nil) #called at end of script
-  files||=DEFAULT_FILE
-    if files.class==Array
-      files.each {|f|`#{$PROGRAM_NAME} #{f}`}
-    else
-      mk_test_context(files)
-    end
+def process(file) #called at end of script
+  files=Dir.glob(file)
+  if files.count > 1
+    files.each {|f|  system("#{$PROGRAM_NAME} #{f}")}
+  else
+    mk_test_context(files[0])
+  end
 end
 def mk_test_context(file, test_case=nil)
   test_name=File.basename(file).sub(/\..*?$/,'')
@@ -42,7 +42,12 @@ def mk_test_context(file, test_case=nil)
   opts[:test_cases].delete_if {|c| c.match(/#{test_name}/)}
   opts[:setup]=text.match(/#{LINSTM}setup\s+(.*?)#{LINSTM}end\s+/m).to_a[1]
   tests=text.split(/#{LINST}[Ee]xamples?:/).to_a[1..-1].to_a.map do |test|
-    test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| "assert_equal #{$2}, #{$1}"}
+    test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| 
+      expected, actual=[$2,$1]
+      #assert equal cannot take a hash as its first argument
+      expected.sub!(/^\{(.*)\}\s*$/) {|m| "Hash[#{$1}]"}
+      "assert_equal #{expected}, #{actual}"
+    }
     lines=test.split(/\n/)
     test_text=lines.map {|l| l.match(/#{LINST}(assert.+)/) && $1}.compact.join ";\n"
     [lines[0], test_text]
@@ -60,4 +65,4 @@ def mk_test_context(file, test_case=nil)
   opts[:contexts].compact.each {|c| mk_test_context "#{c}", test_case}
   opts[:test_cases].each {|c| process(c)}
 end
-process(ARGV.shift)
+process(ARGV.shift || DEFAULT_FILE)
