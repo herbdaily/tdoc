@@ -11,6 +11,7 @@ EXTENSIONS={:tests => '.rdoc',:requires => '_require.rb'}
 DEFAULT_FILE="README#{EXTENSIONS[:tests]}"
 
 def process(files=nil) #called at end of script
+  files=ARGV.shift if ARGV
   files||=DEFAULT_FILE
     if files.class==Array
       files.each {|f|`#{$PROGRAM_NAME} #{f}`}
