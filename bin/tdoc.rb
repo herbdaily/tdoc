@@ -42,7 +42,7 @@ def mk_test_context(file, test_case=nil)
   opts[:test_cases].delete_if {|c| c.match(/#{test_name}/)}
   opts[:setup]=text.match(/#{LINSTM}setup\s+(.*?)#{LINSTM}end\s+/m).to_a[1]
   tests=text.split(/#{LINST}[Ee]xamples?:/).to_a[1..-1].to_a.map do |test|
-    test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| "assert_equal #{$1}, #{$2}"}
+    test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| "assert_equal #{$2}, #{$1}"}
     lines=test.split(/\n/)
     test_text=lines.map {|l| l.match(/#{LINST}(assert.+)/) && $1}.compact.join ";\n"
     [lines[0], test_text]
