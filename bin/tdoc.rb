@@ -27,6 +27,7 @@ end
 def mk_test_context(file, test_case=nil)
   test_name=File.basename(file).sub(/\..*?$/,'')
   test_dir=File.dirname(file)
+  $: << test_dir unless $:.include?(test_dir)
   text=File.read(file)
   opts={
     :requires => Dir.glob("#{test_dir}/#{test_name}#{EXTENSIONS[:requires]}"),
