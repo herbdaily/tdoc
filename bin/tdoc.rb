@@ -13,7 +13,7 @@ DEFAULT_FILE="README#{EXTENSIONS[:tests]}"
 def process(file) #called at end of script
   files=Dir.glob(file)
   if files.count > 1
-    files.each {|f|  system("#{$PROGRAM_NAME} #{f}")}
+    files.each {|f|  system("#{$PROGRAM_NAME} #{f} #{ARGV}")}
   else
     mk_test_context(files[0])
   end
