@@ -2,6 +2,7 @@
 require 'rubygems'
 require 'test/unit'
 require 'shoulda'
+require 'irb'
 
 $: << 'lib'
 
@@ -9,6 +10,8 @@ LINST='^[#|\s]*'
 LINSTM='[#|\s]*'
 EXTENSIONS={:tests => '.rdoc',:requires => '.rb'}
 DEFAULT_FILE="README#{EXTENSIONS[:tests]}"
+
+START_IRB="IRB.setup nil; IRB.conf[:MAIN_CONTEXT] = IRB::Irb.new.context; require 'irb/ext/multi-irb'; IRB.irb nil, self"
 
 def process(file) #called at end of script
   files=Dir.glob(file)
@@ -48,7 +51,13 @@ def mk_test_context(file, test_case=nil)
       "assert_equal #{expected}, #{actual}"
     }
     lines=test.split(/\n/)
-    test_text=lines.map {|l| l.match(/#{LINST}(assert.+)/) && $1}.compact.join ";\n"
+    test_text=lines.map {|l| 
+      if l.match(/#{LINST}!!!/)
+        START_IRB
+      else
+        l.match(/#{LINST}(assert.+)/) && $1
+      end
+    }.compact.join ";\n"
     [lines[0], test_text]
   end
   context_proc=lambda {
