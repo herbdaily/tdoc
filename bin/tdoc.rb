@@ -15,16 +15,15 @@ def process(file) #called at end of script
   if files.count > 1
     files.each {|f|  system("#{$PROGRAM_NAME} #{f} #{ARGV}")}
   else
-    mk_test_context(files[0])
+    test_name=File.basename(file).sub(/\..*?$/,'')
+    test_case=Class.new(Test::Unit::TestCase)
+    Object.const_set(:"Test#{test_name.capitalize}", test_case)
+    mk_test_context(files[0], test_case)
   end
 end
 def mk_test_context(file, test_case=nil)
   test_name=File.basename(file).sub(/\..*?$/,'')
   test_dir=File.dirname(file)
-  unless test_case
-    test_case=Class.new(Test::Unit::TestCase)
-    Object.const_set(:"Test#{test_name.capitalize}", test_case)
-  end
   text=File.read(file)
   opts={
     :requires => Dir.glob("#{test_dir}/#{test_name}#{EXTENSIONS[:requires]}"),
@@ -40,7 +39,7 @@ def mk_test_context(file, test_case=nil)
   end
   opts[:requires].each {|r| require "#{r}" if FileTest.exist? "#{r}" }
   opts[:test_cases].delete_if {|c| c.match(/#{test_name}/)}
-  opts[:setup]=text.match(/#{LINSTM}setup\s+(.*?)#{LINSTM}end\s+/m).to_a[1]
+  setup_text=text.match(/#{LINSTM}setup\s+(.*?)#{LINSTM}end\s+/m).to_a[1]
   tests=text.split(/#{LINST}[Ee]xamples?:/).to_a[1..-1].to_a.map do |test|
     test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| 
       expected, actual=[$2,$1]
@@ -52,17 +51,38 @@ def mk_test_context(file, test_case=nil)
     test_text=lines.map {|l| l.match(/#{LINST}(assert.+)/) && $1}.compact.join ";\n"
     [lines[0], test_text]
   end
-  test_case.context test_name do 
-    setup do 
-      eval opts[:setup].to_a.join ';'
-    end
-    tests.each do |test|
-      should test[0] do
-        eval test[1] 
+  context_proc=lambda {
+    context test_name do
+      setup do
+        eval setup_text.to_a.join ';'
+      end
+      tests.each do |test|
+        should test[0] do
+          eval test[1] 
+        end
+      end
+      opts[:contexts].compact.each do |c| 
+        mk_test_context(c).call
       end
     end
-  end
-  opts[:contexts].compact.each {|c| mk_test_context "#{c}", test_case}
+  }
   opts[:test_cases].each {|c| process(c)}
+  if test_case
+    test_case.context test_name do 
+      setup do 
+        eval setup_text.to_a.join ';'
+      end
+      tests.each do |test|
+        should test[0] do
+          eval test[1] 
+        end
+      end
+      opts[:contexts].compact.each  do |c| 
+        mk_test_context(c).call
+      end
+    end 
+  else
+    context_proc
+  end
 end
 process(ARGV.shift || DEFAULT_FILE)
