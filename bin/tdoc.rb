@@ -68,19 +68,7 @@ def mk_test_context(file, test_case=nil)
   }
   opts[:test_cases].each {|c| process(c)}
   if test_case
-    test_case.context test_name do 
-      setup do 
-        eval setup_text.to_a.join ';'
-      end
-      tests.each do |test|
-        should test[0] do
-          eval test[1] 
-        end
-      end
-      opts[:contexts].compact.each  do |c| 
-        mk_test_context(c).call
-      end
-    end 
+    test_case.module_eval {mk_test_context(file).call}
   else
     context_proc
   end
