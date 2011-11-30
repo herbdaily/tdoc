@@ -1,11 +1,12 @@
 
 ==example.rdoc
-This text is from example.rdoc
+
+This text is in rdoc/example.rdoc
 
   examples: simple irb  with 1 assertion
     
-    >>FOOBAR
-    =>'foobar'
+    >> FOOBAR
+    => 'foobar'
     >> "asdf"
     => "asdf"
     >> x="foo"

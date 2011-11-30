@@ -1,9 +1,9 @@
 
 =Tdoc 
 
-== Test oriented documentation
+*WARNING*:  As of version 0.11.0 Tdoc contains an rdoc/discover file which parses .rdoc files by default.  I am not aware of any issues that this causes but I haven't tested it with any complex rdoc.  So, for now, if your rdoc executable is behaving in an unexpected way, remove this gem and try it again.  If it works, please file a bug report.  If it doesn't, then it's not my fault :).
 
-*note:* Version 0.4.0 completely breaks the API from 0.3.0
+== Test oriented documentation
 
 Tdoc takes a single argument specifying the file or glob to be processed.  If no arguments are given, Tdoc will process "README.rdoc" in the working directory.
 
@@ -27,14 +27,21 @@ Tdoc takes a single argument specifying the file or glob to be processed.  If no
 
 usage:
 
-  tdoc [FILE_GLOB]
+  tdoc [file_glob]
 
-The following verbatim block is included with the ':include' directive:
+The following text is included with the ':include:' directive from rdoc/example.rdoc:
 
-  :include:rdoc/example.rdoc
+----
+
+:include:rdoc/example.rdoc
+
+asdf
+
+----
+
+==Now we are back in the README.rdoc file.
 
 example:
-    # this example is from the README.rdoc file
     >>FOOBAR
     =>'foobar'
 

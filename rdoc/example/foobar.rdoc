@@ -1,7 +1,7 @@
 
-==Foobar.rdoc
+===foobar.rdoc
 
-  This text and the heading above are in rdoc/example/foobar.rdoc
+This text and the heading above are in rdoc/example/foobar.rdoc
 
 examples:
 
