@@ -47,7 +47,7 @@ def mk_test_context(file, test_case=nil)
   tests=text.split(/#{LINST}[Ee]xamples?:/).to_a[1..-1].to_a.map do |test|
     test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| 
       expected, actual=[$2,$1]
-      #assert equal cannot take a hash as its first argument
+      #assert_equal cannot take a hash as its first argument
       expected.sub!(/^\{(.*)\}\s*$/) {|m| "Hash[#{$1}]"}
       "assert_equal #{expected}, #{actual}"
     }

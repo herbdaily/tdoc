@@ -29,13 +29,15 @@ usage:
 
   tdoc [file_glob]
 
-The following text is included with the ':include:' directive from rdoc/example.rdoc:
+setup
+  @foo='bar'
+end
+
+The text between the horizontal lines is included with the ':include:' directive from rdoc/example.rdoc:
 
 ----
 
 :include:rdoc/example.rdoc
-
-asdf
 
 ----
 

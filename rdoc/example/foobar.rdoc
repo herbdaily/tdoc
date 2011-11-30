@@ -5,6 +5,8 @@ This text and the heading above are in rdoc/example/foobar.rdoc
 
 examples:
 
-    >>FOOBAR
-    =>'foobar'
-    #we are still in the READMEText context, so FOOBAR is still set
+    >> FOOBAR
+    => 'foobar'
+
+the above examples are still in the READMETest context, so FOOBAR is still set
+
