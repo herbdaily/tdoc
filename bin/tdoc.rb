@@ -76,10 +76,11 @@ def mk_test_context(file, test_case=nil)
       end
     end
   }
-  opts[:tests].each {|c| process(c)}
   if test_case
     test_case.module_eval {mk_test_context(file).call}
+    opts[:tests].each {|c| process(c)}
   else
+    opts[:tests].each {|c| process(c)}
     context_proc
   end
 end
