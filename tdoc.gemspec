@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://github.com/herbdaily/tdoc'
   s.required_rubygems_version = Gem::Requirement.new(">= 1.0.0") if s.respond_to? :required_rubygems_version=
   s.add_runtime_dependency 'shoulda', '~>2.11.3'
-  s.files = Dir.glob(['README.rdoc','bin/*','rdoc/*'])
+  s.files = Dir.glob(['README.rdoc','bin/*','rdoc/*','lib/**/*'])
   s.executables = ["tdoc.rb"]
   s.default_executable = "tdoc.rb"
 end

@@ -1,2 +1,0 @@
-  require 'rdoc/rdoc'
-  require 'lib/rdoc/parsers/tdoc'
