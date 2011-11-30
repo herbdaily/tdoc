@@ -20,7 +20,7 @@ class RDoc::Parser::Tdoc < RDoc::Parser::Simple
       content="#{tests[0]}\nThe following examples require the file '#{fn}', whose contents follow:\n#{process_includes(fn).gsub(/^/,'  ')}\nExamples: #{tests[1]}"
     end
     Dir.glob("#{test_dir}/#{test_name}/*.rdoc").each do |fn|
-      content+="\n#{process_includes(fn).gsub(/^/,'  ')}\n"
+      content+="\n#{process_includes(fn)}\n"
     end
     content
   end
