@@ -1,0 +1,10 @@
+
+==Foobar.rdoc
+
+  This text and the heading above are in rdoc/example/foobar.rdoc
+
+examples:
+
+    >>FOOBAR
+    =>'foobar'
+    #we are still in the READMEText context, so FOOBAR is still set

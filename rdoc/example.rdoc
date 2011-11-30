@@ -4,6 +4,8 @@ This text is from example.rdoc
 
   examples: simple irb  with 1 assertion
     
+    >>FOOBAR
+    =>'foobar'
     >> "asdf"
     => "asdf"
     >> x="foo"

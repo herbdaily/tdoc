@@ -1,3 +1,3 @@
 
    "this text is inside example.rb and is included in example.rdoc by default"
-   @foobar='foobar'
+   FOOBAR='foobar'

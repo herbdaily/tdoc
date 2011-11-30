@@ -33,3 +33,8 @@ The following verbatim block is included with the ':include' directive:
 
   :include:rdoc/example.rdoc
 
+example:
+    # this example is from the README.rdoc file
+    >>FOOBAR
+    =>'foobar'
+
