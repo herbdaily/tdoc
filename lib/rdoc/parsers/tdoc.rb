@@ -9,13 +9,13 @@ class RDoc::Parser::Tdoc < RDoc::Parser::Simple
     content=File.read(file_name)
     test_name=File.basename(file_name,'.rdoc')
     test_dir=File.dirname(file_name)
-    content.gsub!(/#{LINST}:include:\s*(.+)/) {|foo| process_includes $1}
+    content.gsub!(/(#{LINST}):include:\s*(.+)/) {|foo| indent=$1;process_includes($2).sub(/^/,indent)}
     Dir.glob("#{test_dir}/#{test_name}.rb").each do |fn|
       tests=content.split(/#{LINST}[Ee]xamples?:/,2)
-      content="#{tests[0]}#{process_includes(fn)}\nExamples:\n#{tests[1]}"
+      content="#{tests[0]}#{process_includes(fn).sub(/^/,'  ')}\nExamples:\n#{tests[1]}"
     end
     Dir.glob("#{test_dir}/#{test_name}/*.rdoc").each do |fn|
-      content+="\n#{process_includes(fn)}\n"
+      content+="\n#{process_includes(fn).sub(/^/,'  ')}\n"
     end
     content
   end

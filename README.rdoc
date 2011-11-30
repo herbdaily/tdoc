@@ -9,32 +9,27 @@ Tdoc takes a single argument specifying the file or glob to be processed.  If no
 
 - Tdoc will map each file given to a Test::Unit::TestCase.
 - For each such file, named e.g. '_filename_.rdoc', Tdoc will:
-  - require '<i>filename</i>_include.rb' if it exists
-  - create a context with the test case for each file in the directory named '_filename_' if it exists.
+  - require '<i>filename</i>.rb' if it exists
+  - create a context within the test case for each file in the directory named '_filename_' if it exists.
   - process all :include: directives as follows:
-    - 
+    - If the included file has a .rb extention, it will be required in the context of the test case
+    - If it has a .rdoc extention it will map to a context within the test case
     
- 
-  
-- Tdoc directives take up 1 line, with the exception of the "examples" directive.  They may be preceded by any number of whitespace characters and terminate with a colon.
-- Tdoc understands the following directives:
-  - tdoc_require
-  - tdoc_context
-    - RDoc's standard :include: directive now does the same thing as tdoc_context
-  - tdoc_setup
-  - examples
-- within each examples block, Tdoc will convert cut and pastes from irb into assert_equal blocks, so
-    >> "asdf"
-    => "asdf"
-  turns into:
-    assert_equal "asdf","asdf"
+- In addition to ':include:', Tdoc understands the following directives:
+  - example(s): - Text between these directives maps to a Shoulda #should block 
+    - within each examples block, Tdoc will convert cut and pastes from irb into assert_equal blocks, so
+        >> "asdf"
+        => "asdf"
+      turns into:
+        assert_equal "asdf","asdf"
   Tdoc will then include all assertions within the context created from the example block
+  - setup/end - The first setup/end block is passed to the context's setup method
 
 usage:
 
   tdoc [FILE_GLOB]
 
-examples:
+The following verbatim block is included with the ':include' directive:
 
   :include:rdoc/example.rdoc
 
