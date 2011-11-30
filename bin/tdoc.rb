@@ -32,9 +32,9 @@ def mk_test_context(file, test_case=nil)
   opts={
     :requires => Dir.glob("#{test_dir}/#{test_name}#{EXTENSIONS[:requires]}"),
     :contexts => Dir.glob("#{test_dir}/#{test_name}/*#{EXTENSIONS[:tests]}"),
-    :test_cases => [],
+    :tests => [],
   }
-  [:requires, :test_cases].each do |opt|
+  [:requires, :tests].each do |opt|
     text.scan(/#{LINST}:include:\s*(.+#{EXTENSIONS[opt]})/).each do |files|
       files[0].split(',').each do |f|
         opts[opt] << f unless f.match(/^blob/)
@@ -42,7 +42,7 @@ def mk_test_context(file, test_case=nil)
     end
   end
   opts[:requires].each {|r| require "#{r}" if FileTest.exist? "#{r}" }
-  opts[:test_cases].delete_if {|c| c.match(/#{test_name}/)}
+  opts[:tests].delete_if {|c| c.match(/#{test_name}/)}
   setup_text=text.match(/#{LINSTM}setup\s+(.*?)#{LINSTM}end\s+/m).to_a[1]
   tests=text.split(/#{LINST}[Ee]xamples?:/).to_a[1..-1].to_a.map do |test|
     test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| 
@@ -76,7 +76,7 @@ def mk_test_context(file, test_case=nil)
       end
     end
   }
-  opts[:test_cases].each {|c| process(c)}
+  opts[:tests].each {|c| process(c)}
   if test_case
     test_case.module_eval {mk_test_context(file).call}
   else
