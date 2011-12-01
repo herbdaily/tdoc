@@ -1,0 +1,19 @@
+
+- improve output readability
+- directive to link to a test in the docs but include it in the suite
+- option to specify that a context should have its own process
+- implement acceptance testing DSL along the lines of
+
+  Testing hello.rb
+    I am nobody
+      When I read from /
+      it returns Hello, world!
+    I am user1
+      My password is asdfasdf
+      When I read from /
+      it returns Hello, world!
+    Bob is user2
+      his password is asdfasdf
+      When he reads from /
+      it returns Hello, world!
+
