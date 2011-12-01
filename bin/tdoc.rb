@@ -7,7 +7,6 @@ require 'irb'
 $: << 'lib'
 
 LINST='^[#|\s]*'
-LINSTM='[#|\s]*'
 EXTENSIONS={:tests => '.rdoc',:requires => '.rb'}
 DEFAULT_FILE=["README#{EXTENSIONS[:tests]}"]
 
@@ -43,7 +42,7 @@ def mk_test_context(file, test_case=nil)
   end
   opts[:requires].each {|r| require "#{r}" if FileTest.exist? "#{r}" }
   opts[:tests].delete_if {|c| c.match(/#{test_name}/)}
-  setup_text=text.match(/#{LINSTM}setup\s+(.*?)#{LINSTM}end\s+/m).to_a[1]
+  setup_text=text.sub(/(.*)\n#{LINST}setup\s*\n/m,'').sub(/\n#{LINST}end(.*)/m,'') if text.match(/#{LINST}setup\s*$/)
   tests=text.split(/#{LINST}[Ee]xamples?:/).to_a[1..-1].to_a.map do |test|
     test.gsub!(/#{LINST}>>\s*(.+)\n#{LINST}=>\s*(.+)/) {|m| 
       expected, actual=[$2,$1]
@@ -64,7 +63,7 @@ def mk_test_context(file, test_case=nil)
   context_proc=lambda {
     context test_name do
       setup do
-        eval setup_text.to_a.join ';'
+        eval setup_text.to_a.join(';') 
       end
       tests.each do |test|
         should test[0] do

@@ -44,6 +44,7 @@ The text between the horizontal lines is included with the ':include:' directive
 ==Now we are back in the README.rdoc file.
 
 example:
-    >>FOOBAR
-    =>'foobar'
+
+    >> @foo
+    => "bar"
 
