@@ -9,15 +9,15 @@ $: << 'lib'
 LINST='^[#|\s]*'
 LINSTM='[#|\s]*'
 EXTENSIONS={:tests => '.rdoc',:requires => '.rb'}
-DEFAULT_FILE="README#{EXTENSIONS[:tests]}"
+DEFAULT_FILE=["README#{EXTENSIONS[:tests]}"]
 
 START_IRB="IRB.setup nil; IRB.conf[:MAIN_CONTEXT] = IRB::Irb.new.context; require 'irb/ext/multi-irb'; IRB.irb nil, self"
 
-def process(file) #called at end of script
-  files=Dir.glob(file)
-  if files.count > 1
+def process(files) #called at end of script
+  if files.class==Array && files.count > 1
     files.each {|f|  system("#{$PROGRAM_NAME} #{f} #{ARGV}")}
   else
+    file=files[0]
     test_name=File.basename(file).sub(/\..*?$/,'')
     test_case=Class.new(Test::Unit::TestCase)
     Object.const_set(:"Test#{test_name.capitalize}", test_case)
@@ -78,10 +78,14 @@ def mk_test_context(file, test_case=nil)
   }
   if test_case
     test_case.module_eval {mk_test_context(file).call}
-    opts[:tests].each {|c| process(c)}
+    process opts[:tests] unless opts[:tests].empty?
   else
-    opts[:tests].each {|c| process(c)}
+    process opts[:tests] unless opts[:tests].empty?
     context_proc
   end
 end
-process(ARGV.shift || DEFAULT_FILE)
+if glob=ARGV.shift
+  process(Dir.glob(glob))
+else
+  process(DEFAULT_FILE)
+end
