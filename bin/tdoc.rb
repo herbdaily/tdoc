@@ -13,14 +13,13 @@ DEFAULT_FILE=["README#{EXTENSIONS[:tests]}"]
 START_IRB="IRB.setup nil; IRB.conf[:MAIN_CONTEXT] = IRB::Irb.new.context; require 'irb/ext/multi-irb'; IRB.irb nil, self"
 
 def process(files) #called at end of script
-  if files.class==Array && files.count > 1
+  if files.class==Array 
     files.each {|f|  system("#{$PROGRAM_NAME} #{f} #{ARGV}")}
   else
-    file=files[0]
-    test_name=File.basename(file).sub(/\..*?$/,'')
+    test_name=File.basename(files).sub(/\..*?$/,'')
     test_case=Class.new(Test::Unit::TestCase)
     Object.const_set(:"Test#{test_name.capitalize}", test_case)
-    mk_test_context(files[0], test_case)
+    mk_test_context(files, test_case)
   end
 end
 def mk_test_context(file, test_case=nil)
@@ -79,12 +78,12 @@ def mk_test_context(file, test_case=nil)
     test_case.module_eval {mk_test_context(file).call}
     process opts[:tests] unless opts[:tests].empty?
   else
-    process opts[:tests] unless opts[:tests].empty?
     context_proc
   end
 end
 if glob=ARGV.shift
-  process(Dir.glob(glob))
+  files=Dir.glob(glob)
+  process(files.count > 1 ? files : files[0])
 else
   process(DEFAULT_FILE)
 end
