@@ -14,7 +14,11 @@ START_IRB="IRB.setup nil; IRB.conf[:MAIN_CONTEXT] = IRB::Irb.new.context; requir
 
 def process(files) #called at end of script
   if files.class==Array 
-    files.each {|f|  system("#{$PROGRAM_NAME} #{f} #{ARGV}")}
+    files.each {|f|  
+      puts "\n\n--------------------\n#{f}:\n\n"
+      result=system("#{$PROGRAM_NAME} #{f} #{ARGV}")
+      puts "\n\nERRORS IN TEST #{f}!!!\n\n" unless result
+    }
   else
     test_name=File.basename(files).sub(/\..*?$/,'')
     test_case=Class.new(Test::Unit::TestCase)
@@ -59,6 +63,7 @@ def mk_test_context(file, test_case=nil)
     }.compact.join ";\n"
     [lines[0], test_text]
   end
+  tests=[['work',"assert(true);"]] if tests.empty? #avoids "no tests specified" error
   context_proc=lambda {
     context test_name do
       setup do
