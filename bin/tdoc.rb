@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 require 'rubygems'
 require 'test/unit'
-require 'shoulda'
+require 'contest'
 require 'irb'
 
 $: << 'lib'
@@ -70,7 +70,7 @@ def mk_test_context(file, test_case=nil)
         eval setup_text.to_a.join(';') 
       end
       tests.each do |test|
-        should test[0] do
+        should test[0].to_s do
           eval test[1] 
         end
       end
