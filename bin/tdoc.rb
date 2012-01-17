@@ -1,4 +1,5 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
+
 require 'rubygems'
 require 'test/unit'
 require 'contest'
@@ -67,7 +68,7 @@ def mk_test_context(file, test_case=nil)
   context_proc=lambda {
     context test_name do
       setup do
-        eval setup_text.to_a.join(';') 
+        eval setup_text.to_s#.to_a.join(';') 
       end
       tests.each do |test|
         should test[0].to_s do
