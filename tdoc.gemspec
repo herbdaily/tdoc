@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{tdoc}
-  s.version = "0.13.4"
+  s.version = "0.14"
   s.summary = %q{Test oriented documentation}
   s.description = %q{Combines Test::Unit, Shoulda, and Rdoc to embed tests inside documentation }
   s.authors     = ["Herb Daily"]
@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://github.com/herbdaily/tdoc'
   s.required_rubygems_version = Gem::Requirement.new(">= 1.0.0") if s.respond_to? :required_rubygems_version=
   s.add_runtime_dependency 'contest', '~>0.1.3'
+  s.add_runtime_dependency 'pry', '~>0.9'
   s.files = Dir.glob(['README.rdoc','bin/*','rdoc/*','lib/**/*'])
   s.executables = ["tdoc.rb"]
   s.default_executable = "tdoc.rb"

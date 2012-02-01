@@ -1,9 +1,12 @@
 #!/usr/bin/env ruby
 
+
+#INTEGRATE INTO CODE AS COMMENTS WITH POINTERS IN CODE TO TESTS
+
 require 'rubygems'
 require 'test/unit'
 require 'contest'
-require 'irb'
+require 'pry'
 
 $: << 'lib'
 
@@ -11,7 +14,7 @@ LINST='^[#|\s]*'
 EXTENSIONS={:tests => '.rdoc',:requires => '.rb'}
 DEFAULT_FILE=["README#{EXTENSIONS[:tests]}"]
 
-START_IRB="IRB.setup nil; IRB.conf[:MAIN_CONTEXT] = IRB::Irb.new.context; require 'irb/ext/multi-irb'; IRB.irb nil, self"
+#START_IRB="IRB.setup nil; IRB.conf[:MAIN_CONTEXT] = IRB::Irb.new.context; require 'irb/ext/multi-irb'; IRB.irb nil, self"
 
 def process(files) #called at end of script
   if files.class==Array 
@@ -57,7 +60,7 @@ def mk_test_context(file, test_case=nil)
     lines=test.split(/\n/)
     test_text=lines.map {|l| 
       if l.match(/#{LINST}!!!/)
-        START_IRB
+        binding.pry
       else
         l.match(/#{LINST}(assert.+)/) && $1
       end
