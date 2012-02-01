@@ -60,7 +60,7 @@ def mk_test_context(file, test_case=nil)
     lines=test.split(/\n/)
     test_text=lines.map {|l| 
       if l.match(/#{LINST}!!!/)
-        binding.pry
+        'binding.pry'
       else
         l.match(/#{LINST}(assert.+)/) && $1
       end
