@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{tdoc}
-  s.version = "0.14.1"
+  s.version = "0.15.0"
   s.summary = %q{Test oriented documentation}
   s.description = %q{Combines Test::Unit, Shoulda, and Rdoc to embed tests inside documentation }
   s.authors     = ["Herb Daily"]

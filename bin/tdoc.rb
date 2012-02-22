@@ -9,6 +9,7 @@ require 'contest'
 require 'pry'
 
 $: << 'lib'
+$: << '.' #for 1.9.2+
 
 LINST='^[#|\s]*'
 EXTENSIONS={:tests => '.rdoc',:requires => '.rb'}
