@@ -8,8 +8,8 @@ require 'test/unit'
 require 'contest'
 require 'pry'
 
-$: << 'lib'
-$: << '.' #for 1.9.2+
+$:.unshift './lib'
+$:.unshift '.' #for 1.9.2+
 
 LINST='^[#|\s]*'
 EXTENSIONS={:tests => '.rdoc',:requires => '.rb'}
